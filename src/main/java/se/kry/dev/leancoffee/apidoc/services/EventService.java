@@ -1,5 +1,7 @@
 package se.kry.dev.leancoffee.apidoc.services;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
@@ -62,6 +64,6 @@ public class EventService {
   }
 
   private EventResponse responseFromEvent(Event event) {
-    return new EventResponse(event.getId(), event.getTitle(), event.getStart(), event.getEnd());
+    return new EventResponse(requireNonNull(event.getId()), event.getTitle(), event.getStart(), event.getEnd());
   }
 }
