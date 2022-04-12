@@ -2,6 +2,7 @@ package se.kry.dev.leancoffee.apidoc.rest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -55,6 +56,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isCreated())
@@ -75,6 +77,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -89,6 +92,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -102,6 +106,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -115,6 +120,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -129,6 +135,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -170,6 +177,7 @@ class EventsControllerTest {
         .thenReturn(Optional.of(new EventResponse(uuid, "Some other event", start, start.plusHours(12))));
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isOk())
@@ -183,6 +191,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", "foobar")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -197,6 +206,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isNotFound());
@@ -211,6 +221,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -226,6 +237,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -235,13 +247,15 @@ class EventsControllerTest {
   void delete_event() throws Exception {
     var uuid = UUID.fromString("38a14a82-d5a2-4210-9d61-cc3577bfa5df");
 
-    mockMvc.perform(delete("/api/v1/events/{id}", uuid))
+    mockMvc.perform(delete("/api/v1/events/{id}", uuid)
+            .with(csrf()))
         .andExpect(status().isOk());
   }
 
   @Test
   void delete_event_with_incorrect_id() throws Exception {
-    mockMvc.perform(delete("/api/v1/events/{id}", "foobar"))
+    mockMvc.perform(delete("/api/v1/events/{id}", "foobar")
+            .with(csrf()))
         .andExpect(status().isBadRequest());
   }
 }
