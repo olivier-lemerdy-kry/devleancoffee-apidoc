@@ -1,6 +1,7 @@
 package se.kry.dev.leancoffee.apidoc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -9,23 +10,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import java.util.UUID;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import se.kry.dev.leancoffee.apidoc.data.Event;
 import se.kry.dev.leancoffee.apidoc.data.EventRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ApplicationTest {
 
   @Autowired
@@ -38,8 +35,16 @@ class ApplicationTest {
   private EventRepository repository;
 
   @Test
-  @Order(1)
-  void create_event() throws Exception {
+  @WithMockUser
+  void scenario() throws Exception {
+    UUID id = step1_create_event();
+    step2_read_events();
+    step3_update_event(id);
+    step4_read_event(id);
+    step5_delete_event(id);
+  }
+
+  UUID step1_create_event() throws Exception {
     assertThat(repository.count()).isZero();
 
     var payload = objectMapper.createObjectNode()
@@ -48,7 +53,8 @@ class ApplicationTest {
         .put("end", "2001-01-01T12:00:00")
         .toString();
 
-    mockMvc.perform(post("/api/v1/events")
+    var result = mockMvc.perform(post("/api/v1/events")
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isCreated())
@@ -56,14 +62,14 @@ class ApplicationTest {
             jsonPath("$.title").value("Some event"),
             jsonPath("$.start").value("2001-01-01T00:00:00"),
             jsonPath("$.end").value("2001-01-01T12:00:00")
-        );
+        ).andReturn();
 
     assertThat(repository.count()).isEqualTo(1);
+
+    return UUID.fromString(JsonPath.read(result.getResponse().getContentAsString(), "$.id"));
   }
 
-  @Test
-  @Order(2)
-  void read_events() throws Exception {
+  void step2_read_events() throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
     mockMvc.perform(get("/api/v1/events"))
@@ -76,9 +82,7 @@ class ApplicationTest {
         );
   }
 
-  @Test
-  @Order(3)
-  void update_event() throws Exception {
+  void step3_update_event(UUID id) throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
     var payload = objectMapper.createObjectNode()
@@ -87,7 +91,8 @@ class ApplicationTest {
         .put("end", "2001-01-01T13:00:00")
         .toString();
 
-    mockMvc.perform(patch("/api/v1/events/{id}", findFirstEventId())
+    mockMvc.perform(patch("/api/v1/events/{id}", id)
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpectAll(
@@ -97,12 +102,10 @@ class ApplicationTest {
         );
   }
 
-  @Test
-  @Order(4)
-  void read_event() throws Exception {
+  void step4_read_event(UUID id) throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
-    mockMvc.perform(get("/api/v1/events/{id}", findFirstEventId()))
+    mockMvc.perform(get("/api/v1/events/{id}", id))
         .andExpectAll(
             jsonPath("$.title").value("Some other event"),
             jsonPath("$.start").value("2001-01-01T01:00:00"),
@@ -110,21 +113,13 @@ class ApplicationTest {
         );
   }
 
-  @Test
-  @Order(5)
-  void delete_event() throws Exception {
+  void step5_delete_event(UUID id) throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
-    mockMvc.perform(delete("/api/v1/events/{id}", findFirstEventId()))
+    mockMvc.perform(delete("/api/v1/events/{id}", id)
+            .with(csrf()))
         .andExpect(status().isOk());
 
     assertThat(repository.count()).isZero();
-  }
-
-  private UUID findFirstEventId() {
-    return repository.findAll(Pageable.ofSize(1))
-        .stream().findFirst()
-        .map(Event::getId)
-        .orElseThrow();
   }
 }
