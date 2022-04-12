@@ -1,11 +1,15 @@
 package se.kry.dev.leancoffee.apidoc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,6 +18,7 @@ import com.jayway.jsonpath.JsonPath;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -23,6 +28,7 @@ import se.kry.dev.leancoffee.apidoc.data.EventRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "dev.kry.se")
 class ApplicationTest {
 
   @Autowired
@@ -61,8 +67,9 @@ class ApplicationTest {
         .andExpectAll(
             jsonPath("$.title").value("Some event"),
             jsonPath("$.start").value("2001-01-01T00:00:00"),
-            jsonPath("$.end").value("2001-01-01T12:00:00")
-        ).andReturn();
+            jsonPath("$.end").value("2001-01-01T12:00:00"))
+        .andDo(document("POST-events", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
+        .andReturn();
 
     assertThat(repository.count()).isEqualTo(1);
 
@@ -78,8 +85,8 @@ class ApplicationTest {
             jsonPath("$.content").isArray(),
             jsonPath("$.content[0].title").value("Some event"),
             jsonPath("$.content[0].start").value("2001-01-01T00:00:00"),
-            jsonPath("$.content[0].end").value("2001-01-01T12:00:00")
-        );
+            jsonPath("$.content[0].end").value("2001-01-01T12:00:00"))
+        .andDo(document("GET-events", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
   }
 
   void step3_update_event(UUID id) throws Exception {
@@ -98,8 +105,8 @@ class ApplicationTest {
         .andExpectAll(
             jsonPath("$.title").value("Some other event"),
             jsonPath("$.start").value("2001-01-01T01:00:00"),
-            jsonPath("$.end").value("2001-01-01T13:00:00")
-        );
+            jsonPath("$.end").value("2001-01-01T13:00:00"))
+        .andDo(document("PATCH-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
   }
 
   void step4_read_event(UUID id) throws Exception {
@@ -109,8 +116,8 @@ class ApplicationTest {
         .andExpectAll(
             jsonPath("$.title").value("Some other event"),
             jsonPath("$.start").value("2001-01-01T01:00:00"),
-            jsonPath("$.end").value("2001-01-01T13:00:00")
-        );
+            jsonPath("$.end").value("2001-01-01T13:00:00"))
+        .andDo(document("GET-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
   }
 
   void step5_delete_event(UUID id) throws Exception {
@@ -118,7 +125,8 @@ class ApplicationTest {
 
     mockMvc.perform(delete("/api/v1/events/{id}", id)
             .with(csrf()))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andDo(document("DELETE-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
 
     assertThat(repository.count()).isZero();
   }
