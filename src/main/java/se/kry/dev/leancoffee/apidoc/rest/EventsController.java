@@ -2,7 +2,6 @@ package se.kry.dev.leancoffee.apidoc.rest;
 
 import java.util.UUID;
 import javax.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -24,7 +23,7 @@ import se.kry.dev.leancoffee.apidoc.domain.EventUpdateRequest;
 import se.kry.dev.leancoffee.apidoc.services.EventService;
 
 @RestController
-@RequestMapping("/api/v1/events")
+@RequestMapping("events")
 public class EventsController {
 
   private final EventService service;

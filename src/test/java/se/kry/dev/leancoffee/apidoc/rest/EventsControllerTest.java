@@ -2,7 +2,6 @@ package se.kry.dev.leancoffee.apidoc.rest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -58,7 +57,7 @@ class EventsControllerTest {
         .put("end", "2001-01-01T00:00:00")
         .toString();
 
-    mockMvc.perform(post("/api/v1/events")
+    mockMvc.perform(post("/events")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isCreated())
@@ -78,7 +77,7 @@ class EventsControllerTest {
         .put("end", "2001-01-01T00:00:00")
         .toString();
 
-    mockMvc.perform(post("/api/v1/events")
+    mockMvc.perform(post("/events")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -92,7 +91,7 @@ class EventsControllerTest {
         .put("end", "2001-01-01T12:00:00")
         .toString();
 
-    mockMvc.perform(post("/api/v1/events")
+    mockMvc.perform(post("/events")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -105,7 +104,7 @@ class EventsControllerTest {
         .put("end", "2001-01-01T00:00:00")
         .toString();
 
-    mockMvc.perform(post("/api/v1/events")
+    mockMvc.perform(post("/events")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -118,7 +117,7 @@ class EventsControllerTest {
         .put("start", "2001-01-01T00:00:00")
         .toString();
 
-    mockMvc.perform(post("/api/v1/events")
+    mockMvc.perform(post("/events")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -132,7 +131,7 @@ class EventsControllerTest {
         .put("end", "2001-01-01T00:00:00")
         .toString();
 
-    mockMvc.perform(post("/api/v1/events")
+    mockMvc.perform(post("/events")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -158,7 +157,7 @@ class EventsControllerTest {
     when(service.getEvents(pageable))
         .thenReturn(new PageImpl<>(content, pageable, content.size()));
 
-    mockMvc.perform(get("/api/v1/events"))
+    mockMvc.perform(get("/events"))
         .andExpect(status().isOk())
         .andExpectAll(
             jsonPath("$._embedded").isMap(),
@@ -174,7 +173,7 @@ class EventsControllerTest {
     when(service.getEvent(uuid)).thenReturn(
         Optional.of(new EventResponse(uuid, "Some event", start, start.plusHours(12))));
 
-    mockMvc.perform(get("/api/v1/events/{id}", uuid))
+    mockMvc.perform(get("/events/{id}", uuid))
         .andExpect(status().isOk())
         .andExpectAll(
             jsonPath("$.title").value("Some event"),
@@ -197,7 +196,7 @@ class EventsControllerTest {
         new EventUpdateRequest(Optional.of("Some other event"), Optional.empty(), Optional.empty())))
         .thenReturn(Optional.of(new EventResponse(uuid, "Some other event", start, start.plusHours(12))));
 
-    mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+    mockMvc.perform(patch("/events/{id}", uuid)
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isOk())
@@ -210,7 +209,7 @@ class EventsControllerTest {
         .put("title", "Some other event")
         .toString();
 
-    mockMvc.perform(patch("/api/v1/events/{id}", "foobar")
+    mockMvc.perform(patch("/events/{id}", "foobar")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -224,7 +223,7 @@ class EventsControllerTest {
         .put("title", "Some other event")
         .toString();
 
-    mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+    mockMvc.perform(patch("/events/{id}", uuid)
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isNotFound());
@@ -238,7 +237,7 @@ class EventsControllerTest {
         .put("title", "X".repeat(300))
         .toString();
 
-    mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+    mockMvc.perform(patch("/events/{id}", uuid)
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -253,7 +252,7 @@ class EventsControllerTest {
         .put("end", "2001-01-01T00:00:00")
         .toString();
 
-    mockMvc.perform(patch("/api/v1/events/{id}", uuid)
+    mockMvc.perform(patch("/events/{id}", uuid)
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -263,13 +262,13 @@ class EventsControllerTest {
   void delete_event() throws Exception {
     var uuid = UUID.fromString("38a14a82-d5a2-4210-9d61-cc3577bfa5df");
 
-    mockMvc.perform(delete("/api/v1/events/{id}", uuid))
+    mockMvc.perform(delete("/events/{id}", uuid))
         .andExpect(status().isOk());
   }
 
   @Test
   void delete_event_with_incorrect_id() throws Exception {
-    mockMvc.perform(delete("/api/v1/events/{id}", "foobar"))
+    mockMvc.perform(delete("/events/{id}", "foobar"))
         .andExpect(status().isBadRequest());
   }
 }

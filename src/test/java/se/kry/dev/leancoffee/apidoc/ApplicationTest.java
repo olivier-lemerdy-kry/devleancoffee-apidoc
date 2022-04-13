@@ -9,7 +9,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,7 +58,7 @@ class ApplicationTest {
         .put("end", "2001-01-01T12:00:00")
         .toString();
 
-    var result = mockMvc.perform(post("/api/v1/events")
+    var result = mockMvc.perform(post("/events")
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isCreated())
@@ -78,7 +77,7 @@ class ApplicationTest {
   void step2_read_events() throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
-    mockMvc.perform(get("/api/v1/events"))
+    mockMvc.perform(get("/events"))
         .andExpect(status().isOk())
         .andExpectAll(
             jsonPath("$._embedded").isMap(),
@@ -98,7 +97,7 @@ class ApplicationTest {
         .put("end", "2001-01-01T13:00:00")
         .toString();
 
-    mockMvc.perform(patch("/api/v1/events/{id}", id)
+    mockMvc.perform(patch("/events/{id}", id)
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpectAll(
@@ -111,7 +110,7 @@ class ApplicationTest {
   void step4_read_event(UUID id) throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
-    mockMvc.perform(get("/api/v1/events/{id}", id))
+    mockMvc.perform(get("/events/{id}", id))
         .andExpectAll(
             jsonPath("$.title").value("Some other event"),
             jsonPath("$.start").value("2001-01-01T01:00:00"),
@@ -122,7 +121,7 @@ class ApplicationTest {
   void step5_delete_event(UUID id) throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
-    mockMvc.perform(delete("/api/v1/events/{id}", id))
+    mockMvc.perform(delete("/events/{id}", id))
         .andExpect(status().isOk())
         .andDo(document("DELETE-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
 

@@ -1,6 +1,6 @@
 
 ###
-POST http://localhost:8080/api/v1/events
+POST http://localhost:8080/events
 Authorization: Basic user password
 Content-Type: application/json
 
@@ -8,12 +8,12 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/v1/events
+GET http://localhost:8080/events
 Authorization: Basic user password
 
 ###
 
-PATCH http://localhost:8080/api/v1/events/{{event_id}}
+PATCH http://localhost:8080/events/{{event_id}}
 Authorization: Basic user password
 Content-Type: application/json
 
@@ -21,10 +21,10 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/v1/events/{{event_id}}
+GET http://localhost:8080/events/{{event_id}}
 Authorization: Basic user password
 
 ###
 
-DELETE http://localhost:8080/api/v1/events/{{event_id}}
+DELETE http://localhost:8080/events/{{event_id}}
 Authorization: Basic user password
