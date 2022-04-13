@@ -60,7 +60,6 @@ class ApplicationTest {
         .toString();
 
     var result = mockMvc.perform(post("/api/v1/events")
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isCreated())
@@ -99,7 +98,6 @@ class ApplicationTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", id)
-            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpectAll(
@@ -123,8 +121,7 @@ class ApplicationTest {
   void step5_delete_event(UUID id) throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
-    mockMvc.perform(delete("/api/v1/events/{id}", id)
-            .with(csrf()))
+    mockMvc.perform(delete("/api/v1/events/{id}", id))
         .andExpect(status().isOk())
         .andDo(document("DELETE-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
 
