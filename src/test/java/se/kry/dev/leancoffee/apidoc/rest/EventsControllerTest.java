@@ -161,7 +161,23 @@ class EventsControllerTest {
         .andExpect(status().isOk())
         .andExpectAll(
             jsonPath("$._embedded").isMap(),
-            jsonPath("$._embedded.events").isArray()
+            jsonPath("$._embedded.events").isArray(),
+            jsonPath("$._embedded.events[0].id").value("38a14a82-d5a2-4210-9d61-cc3577bfa5df"),
+            jsonPath("$._embedded.events[0].title").value("Some event"),
+            jsonPath("$._embedded.events[0].start").value("2001-01-01T00:00:00"),
+            jsonPath("$._embedded.events[0].end").value("2001-01-01T12:00:00"),
+            jsonPath("$._embedded.events[1].id").value("8ebea9a7-e0ef-4a62-a729-aff26134f9d8"),
+            jsonPath("$._embedded.events[1].title").value("Some other event"),
+            jsonPath("$._embedded.events[1].start").value("2001-01-01T01:00:00"),
+            jsonPath("$._embedded.events[1].end").value("2001-01-01T13:00:00"),
+            jsonPath("$._links").isMap(),
+            jsonPath("$._links.self").isMap(),
+            jsonPath("$._links.self.href").value("http://localhost/events?page=0&size=20"),
+            jsonPath("$.page").isMap(),
+            jsonPath("$.page.size").value(20),
+            jsonPath("$.page.totalElements").value(2),
+            jsonPath("$.page.totalPages").value(1),
+            jsonPath("$.page.number").value(0)
         );
   }
 
