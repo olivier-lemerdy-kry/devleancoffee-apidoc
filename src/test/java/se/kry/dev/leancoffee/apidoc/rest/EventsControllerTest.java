@@ -14,12 +14,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -137,8 +140,30 @@ class EventsControllerTest {
 
   @Test
   void read_events() throws Exception {
+    var uuid1 = UUID.fromString("38a14a82-d5a2-4210-9d61-cc3577bfa5df");
+    var start1 = LocalDate.of(2001, Month.JANUARY, 1).atTime(LocalTime.MIDNIGHT);
+    var end1 = start1.plusHours(12);
+
+    var uuid2 = UUID.fromString("8ebea9a7-e0ef-4a62-a729-aff26134f9d8");
+    var start2 = start1.plusHours(1);
+    var end2 = end1.plusHours(1);
+
+    var content = List.of(
+        new EventResponse(uuid1, "Some event", start1, end1),
+        new EventResponse(uuid2, "Some other event", start2, end2)
+    );
+
+    var pageable = PageRequest.ofSize(20);
+
+    when(service.getEvents(pageable))
+        .thenReturn(new PageImpl<>(content, pageable, content.size()));
+
     mockMvc.perform(get("/api/v1/events"))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpectAll(
+            jsonPath("$._embedded").isMap(),
+            jsonPath("$._embedded.events").isArray()
+        );
   }
 
   @Test
@@ -151,9 +176,11 @@ class EventsControllerTest {
 
     mockMvc.perform(get("/api/v1/events/{id}", uuid))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.title").value("Some event"))
-        .andExpect(jsonPath("$.start").value("2001-01-01T00:00:00"))
-        .andExpect(jsonPath("$.end").value("2001-01-01T12:00:00"));
+        .andExpectAll(
+            jsonPath("$.title").value("Some event"),
+            jsonPath("$.start").value("2001-01-01T00:00:00"),
+            jsonPath("$.end").value("2001-01-01T12:00:00")
+        );
   }
 
   @Test

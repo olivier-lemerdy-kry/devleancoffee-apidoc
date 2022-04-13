@@ -7,7 +7,9 @@ import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.springframework.hateoas.server.core.Relation;
 
+@Relation(collectionRelation = "events", itemRelation = "event")
 public record EventResponse(@NotNull UUID id,
                             @NotBlank @Size(max = SIZE_TITLE) String title,
                             @NotNull LocalDateTime start,

@@ -81,10 +81,11 @@ class ApplicationTest {
     mockMvc.perform(get("/api/v1/events"))
         .andExpect(status().isOk())
         .andExpectAll(
-            jsonPath("$.content").isArray(),
-            jsonPath("$.content[0].title").value("Some event"),
-            jsonPath("$.content[0].start").value("2001-01-01T00:00:00"),
-            jsonPath("$.content[0].end").value("2001-01-01T12:00:00"))
+            jsonPath("$._embedded").isMap(),
+            jsonPath("$._embedded.events").isArray(),
+            jsonPath("$._embedded.events[0].title").value("Some event"),
+            jsonPath("$._embedded.events[0].start").value("2001-01-01T00:00:00"),
+            jsonPath("$._embedded.events[0].end").value("2001-01-01T12:00:00"))
         .andDo(document("GET-events", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
   }
 
