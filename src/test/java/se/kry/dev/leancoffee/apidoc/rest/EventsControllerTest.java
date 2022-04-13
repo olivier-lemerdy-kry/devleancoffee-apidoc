@@ -56,7 +56,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isCreated())
@@ -77,7 +77,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -92,7 +92,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -106,7 +106,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -120,7 +120,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -135,7 +135,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(post("/api/v1/events")
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -177,7 +177,7 @@ class EventsControllerTest {
         .thenReturn(Optional.of(new EventResponse(uuid, "Some other event", start, start.plusHours(12))));
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isOk())
@@ -191,7 +191,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", "foobar")
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -206,7 +206,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isNotFound());
@@ -221,7 +221,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -237,7 +237,7 @@ class EventsControllerTest {
         .toString();
 
     mockMvc.perform(patch("/api/v1/events/{id}", uuid)
-            .with(csrf())
+            .with(csrf().asHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isBadRequest());
@@ -248,7 +248,7 @@ class EventsControllerTest {
     var uuid = UUID.fromString("38a14a82-d5a2-4210-9d61-cc3577bfa5df");
 
     mockMvc.perform(delete("/api/v1/events/{id}", uuid)
-            .with(csrf()))
+            .with(csrf().asHeader()))
         .andExpect(status().isOk());
   }
 
