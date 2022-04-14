@@ -1,4 +1,4 @@
-package se.kry.dev.leancoffee.apidoc.rest;
+package se.kry.dev.leancoffee.apidoc.web;
 
 import java.util.UUID;
 import javax.validation.Valid;
@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,7 @@ import se.kry.dev.leancoffee.apidoc.services.EventService;
 
 @RestController
 @RequestMapping("events")
+@ExposesResourceFor(EventResponse.class)
 public class EventsController {
 
   private final EventService service;

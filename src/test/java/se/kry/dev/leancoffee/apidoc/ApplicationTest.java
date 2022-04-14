@@ -1,6 +1,7 @@
 package se.kry.dev.leancoffee.apidoc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -27,8 +28,8 @@ import se.kry.dev.leancoffee.apidoc.data.EventRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureRestDocs(uriScheme = "https", uriHost = "dev.kry.se")
-class ApplicationTest {
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "dev.kry.se", uriPort = 443)
+class  ApplicationTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -65,7 +66,10 @@ class ApplicationTest {
         .andExpectAll(
             jsonPath("$.title").value("Some event"),
             jsonPath("$.start").value("2001-01-01T00:00:00"),
-            jsonPath("$.end").value("2001-01-01T12:00:00"))
+            jsonPath("$.end").value("2001-01-01T12:00:00"),
+            jsonPath("$._links").isMap(),
+            jsonPath("$._links.self").isMap(),
+            jsonPath("$._links.self.href").value(startsWith("https://dev.kry.se/events/")))
         .andDo(document("POST-events", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
         .andReturn();
 
@@ -84,7 +88,10 @@ class ApplicationTest {
             jsonPath("$._embedded.events").isArray(),
             jsonPath("$._embedded.events[0].title").value("Some event"),
             jsonPath("$._embedded.events[0].start").value("2001-01-01T00:00:00"),
-            jsonPath("$._embedded.events[0].end").value("2001-01-01T12:00:00"))
+            jsonPath("$._embedded.events[0].end").value("2001-01-01T12:00:00"),
+            jsonPath("$._embedded.events[0]._links").isMap(),
+            jsonPath("$._embedded.events[0]._links.self").isMap(),
+            jsonPath("$._embedded.events[0]._links.self.href").value(startsWith("https://dev.kry.se/events/")))
         .andDo(document("GET-events", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
   }
 
