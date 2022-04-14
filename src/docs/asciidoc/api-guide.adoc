@@ -112,21 +112,21 @@ The Notes resources is used to create and list notes
 
 A `GET` request will list all of the events.
 
-operation::GET-events[snippets='response-fields,curl-request,http-response']
+operation::step2_read_events[snippets='response-fields,curl-request,http-response']
 
 [[resources_events_create]]
 === Creating an event
 
 A `POST` request is used to create an event.
 
-operation::POST-events[snippets='request-fields,curl-request,http-response']
+operation::step1_create_event[snippets='request-fields,curl-request,http-response']
 
 [[resources_event_read]]
 === Retrieving an event
 
 A `GET` request will retrieve the details of an event.
 
-operation::GET-events-ID[snippets='response-fields,curl-request,http-response']
+operation::step4_read_event[snippets='response-fields,curl-request,http-response']
 
 [[resources_event_update]]
 === Updating an event
@@ -135,7 +135,7 @@ A `PATCH` request is used to update and event.
 
 ==== Request structure
 
-include::{snippets}/PATCH-events-ID/request-fields.adoc[]
+include::{snippets}/step_3_update_event/request-fields.adoc[]
 
 To leave an attribute of a note unchanged, any of the above may be omitted from the request.
 
@@ -146,4 +146,4 @@ operation::PATCH-events-ID[snippets='curl-request,http-response']
 
 A `DELETE` request is used to delete an event
 
-operation::DELETE-events-ID[snippets='response-fields,curl-request,http-response']
+operation::step_5_delete_event[snippets='response-fields,curl-request,http-response']

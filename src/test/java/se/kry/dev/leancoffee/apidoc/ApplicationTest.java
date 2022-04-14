@@ -2,7 +2,6 @@ package se.kry.dev.leancoffee.apidoc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.startsWith;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
@@ -22,6 +21,8 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import se.kry.dev.leancoffee.apidoc.data.EventRepository;
@@ -29,7 +30,7 @@ import se.kry.dev.leancoffee.apidoc.data.EventRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs(uriScheme = "https", uriHost = "dev.kry.se", uriPort = 443)
-class  ApplicationTest {
+class ApplicationTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -70,7 +71,7 @@ class  ApplicationTest {
             jsonPath("$._links").isMap(),
             jsonPath("$._links.self").isMap(),
             jsonPath("$._links.self.href").value(startsWith("https://dev.kry.se/events/")))
-        .andDo(document("POST-events", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
+        .andDo(document())
         .andReturn();
 
     assertThat(repository.count()).isEqualTo(1);
@@ -92,7 +93,7 @@ class  ApplicationTest {
             jsonPath("$._embedded.events[0]._links").isMap(),
             jsonPath("$._embedded.events[0]._links.self").isMap(),
             jsonPath("$._embedded.events[0]._links.self.href").value(startsWith("https://dev.kry.se/events/")))
-        .andDo(document("GET-events", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
+        .andDo(document());
   }
 
   void step3_update_event(UUID id) throws Exception {
@@ -110,8 +111,11 @@ class  ApplicationTest {
         .andExpectAll(
             jsonPath("$.title").value("Some other event"),
             jsonPath("$.start").value("2001-01-01T01:00:00"),
-            jsonPath("$.end").value("2001-01-01T13:00:00"))
-        .andDo(document("PATCH-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
+            jsonPath("$.end").value("2001-01-01T13:00:00"),
+            jsonPath("$._links").isMap(),
+            jsonPath("$._links.self").isMap(),
+            jsonPath("$._links.self.href").value(startsWith("https://dev.kry.se/events/")))
+        .andDo(document());
   }
 
   void step4_read_event(UUID id) throws Exception {
@@ -121,17 +125,26 @@ class  ApplicationTest {
         .andExpectAll(
             jsonPath("$.title").value("Some other event"),
             jsonPath("$.start").value("2001-01-01T01:00:00"),
-            jsonPath("$.end").value("2001-01-01T13:00:00"))
-        .andDo(document("GET-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
+            jsonPath("$.end").value("2001-01-01T13:00:00"),
+            jsonPath("$._links").isMap(),
+            jsonPath("$._links.self").isMap(),
+            jsonPath("$._links.self.href").value(startsWith("https://dev.kry.se/events/")))
+        .andDo(document());
   }
 
   void step5_delete_event(UUID id) throws Exception {
     assertThat(repository.count()).isEqualTo(1);
 
     mockMvc.perform(delete("/events/{id}", id))
-        .andExpect(status().isOk())
-        .andDo(document("DELETE-events-ID", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())));
+        .andExpect(status().isNoContent())
+        .andDo(document());
 
     assertThat(repository.count()).isZero();
+  }
+
+  private RestDocumentationResultHandler document() {
+    return MockMvcRestDocumentation.document("{method_name}",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()));
   }
 }

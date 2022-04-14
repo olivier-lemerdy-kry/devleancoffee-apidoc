@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,11 +63,15 @@ class EventsControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(payload))
         .andExpect(status().isCreated())
+        .andExpect(header().string("Location", "http://localhost/events/38a14a82-d5a2-4210-9d61-cc3577bfa5df"))
         .andExpectAll(
             jsonPath("$.id").value("38a14a82-d5a2-4210-9d61-cc3577bfa5df"),
             jsonPath("$.title").value("Some event"),
             jsonPath("$.start").value("2001-01-01T00:00:00"),
-            jsonPath("$.end").value("2001-01-01T12:00:00")
+            jsonPath("$.end").value("2001-01-01T12:00:00"),
+            jsonPath("$._links").isMap(),
+            jsonPath("$._links.self").isMap(),
+            jsonPath("$._links.self.href").value("http://localhost/events/38a14a82-d5a2-4210-9d61-cc3577bfa5df")
         );
   }
 
@@ -179,7 +184,7 @@ class EventsControllerTest {
             jsonPath("$.page.totalElements").value(2),
             jsonPath("$.page.totalPages").value(1),
             jsonPath("$.page.number").value(0)
-        );
+        ).andDo(print());
   }
 
   @Test
@@ -196,7 +201,7 @@ class EventsControllerTest {
             jsonPath("$.title").value("Some event"),
             jsonPath("$.start").value("2001-01-01T00:00:00"),
             jsonPath("$.end").value("2001-01-01T12:00:00")
-        );
+        ).andDo(print());
   }
 
   @Test
@@ -280,7 +285,7 @@ class EventsControllerTest {
     var uuid = UUID.fromString("38a14a82-d5a2-4210-9d61-cc3577bfa5df");
 
     mockMvc.perform(delete("/events/{id}", uuid))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
   }
 
   @Test
