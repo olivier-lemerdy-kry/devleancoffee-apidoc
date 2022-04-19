@@ -44,7 +44,7 @@ public class EventsController {
   @PostMapping
   ResponseEntity<EntityModel<EventResponse>> createEvent(@Valid @RequestBody EventCreationRequest eventCreationRequest) {
     var event = service.createEvent(eventCreationRequest);
-    var link = readEventLinkBuilder(event.id());
+    var link = readEventLink(event.id());
     return ResponseEntity.created(link.toUri()).body(EntityModel.of(event).add(link));
   }
 
@@ -56,7 +56,7 @@ public class EventsController {
         new SimpleRepresentationModelAssembler<>() {
           @Override
           public void addLinks(EntityModel<EventResponse> resource) {
-            resource.add(readEventLinkBuilder(requireNonNull(resource.getContent()).id()));
+            resource.add(readEventLink(requireNonNull(resource.getContent()).id()));
           }
 
           @Override
@@ -71,7 +71,7 @@ public class EventsController {
     return service.getEvent(id)
         .map(EntityModel::of)
         .map(entity -> entity.add(
-            readEventLinkBuilder(id)
+            readEventLink(id)
                 .andAffordance(updateEventAffordance(id))
                 .andAffordance(deleteEventAffordance(id))))
         .map(ResponseEntity::ok)
@@ -84,7 +84,7 @@ public class EventsController {
       @Valid @RequestBody EventUpdateRequest eventUpdateRequest) {
     return service.updateEvent(id, eventUpdateRequest)
         .map(EntityModel::of)
-        .map(entity -> entity.add(readEventLinkBuilder(id)
+        .map(entity -> entity.add(readEventLink(id)
             .andAffordance(updateEventAffordance(id))
             .andAffordance(deleteEventAffordance(id))))
         .map(ResponseEntity::ok)
@@ -97,7 +97,7 @@ public class EventsController {
     return ResponseEntity.noContent().build();
   }
 
-  private Link readEventLinkBuilder(UUID id) {
+  private Link readEventLink(UUID id) {
     return linkTo(methodOn(EventsController.class).readEvent(id)).withSelfRel();
   }
 
