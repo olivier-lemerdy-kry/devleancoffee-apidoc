@@ -9,7 +9,7 @@ import org.springframework.hateoas.InputType;
 import org.springframework.hateoas.mediatype.html.HtmlInputType;
 
 public record EventUpdateRequest(
-    @Size(max = SIZE_TITLE) Optional<@Size(max = SIZE_TITLE) String> title,
+    Optional<@Size(max = SIZE_TITLE) String> title,
     @InputType(HtmlInputType.DATETIME_LOCAL_VALUE) Optional<LocalDateTime> start,
     @InputType(HtmlInputType.DATETIME_LOCAL_VALUE) Optional<LocalDateTime> end) {
 
