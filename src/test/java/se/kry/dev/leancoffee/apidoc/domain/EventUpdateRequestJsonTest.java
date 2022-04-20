@@ -23,9 +23,9 @@ class EventUpdateRequestJsonTest {
     var eventUpdateRequest = jacksonTester.parseObject("{}");
 
     assertThat(eventUpdateRequest).isNotNull();
-    assertThat(eventUpdateRequest.title()).isEmpty();
-    assertThat(eventUpdateRequest.start()).isEmpty();
-    assertThat(eventUpdateRequest.end()).isEmpty();
+    assertThat(eventUpdateRequest.getTitle()).isEmpty();
+    assertThat(eventUpdateRequest.getStart()).isEmpty();
+    assertThat(eventUpdateRequest.getEnd()).isEmpty();
   }
 
   @Test
@@ -45,9 +45,9 @@ class EventUpdateRequestJsonTest {
     var eventUpdateRequest = jacksonTester.readObject("EventUpdateRequest.json");
 
     assertThat(eventUpdateRequest).isNotNull();
-    assertThat(eventUpdateRequest.title()).hasValue("Some other event");
-    assertThat(eventUpdateRequest.start()).hasValue(start);
-    assertThat(eventUpdateRequest.end()).hasValue(end);
+    assertThat(eventUpdateRequest.getTitle()).hasValue("Some other event");
+    assertThat(eventUpdateRequest.getStart()).hasValue(start);
+    assertThat(eventUpdateRequest.getEnd()).hasValue(end);
   }
 
   @Test

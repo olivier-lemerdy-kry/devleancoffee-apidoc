@@ -51,15 +51,15 @@ public class EventService {
 
   private Event newEventFromCreationRequest(@NotNull EventCreationRequest eventCreationRequest) {
     return new Event()
-        .setTitle(eventCreationRequest.title())
-        .setStart(eventCreationRequest.start())
-        .setEnd(eventCreationRequest.end());
+        .setTitle(eventCreationRequest.getTitle())
+        .setStart(eventCreationRequest.getStart())
+        .setEnd(eventCreationRequest.getEnd());
   }
 
   private Event updateEventFromUpdateRequest(@NotNull Event event, @NotNull EventUpdateRequest eventUpdateRequest) {
-    eventUpdateRequest.title().ifPresent(event::setTitle);
-    eventUpdateRequest.start().ifPresent(event::setStart);
-    eventUpdateRequest.end().ifPresent(event::setEnd);
+    eventUpdateRequest.getTitle().ifPresent(event::setTitle);
+    eventUpdateRequest.getStart().ifPresent(event::setStart);
+    eventUpdateRequest.getEnd().ifPresent(event::setEnd);
     return event;
   }
 

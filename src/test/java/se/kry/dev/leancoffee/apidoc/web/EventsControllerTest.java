@@ -130,20 +130,6 @@ class EventsControllerTest {
   }
 
   @Test
-  void create_event_with_start_after_end() throws Exception {
-    var payload = objectMapper.createObjectNode()
-        .put("title", "Some event")
-        .put("start", "2001-01-01T12:00:00")
-        .put("end", "2001-01-01T00:00:00")
-        .toString();
-
-    mockMvc.perform(post("/events")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(payload))
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
   void read_events() throws Exception {
     var uuid1 = UUID.fromString("38a14a82-d5a2-4210-9d61-cc3577bfa5df");
     var start1 = LocalDate.of(2001, Month.JANUARY, 1).atTime(LocalTime.MIDNIGHT);
@@ -257,21 +243,6 @@ class EventsControllerTest {
 
     var payload = objectMapper.createObjectNode()
         .put("title", "X".repeat(300))
-        .toString();
-
-    mockMvc.perform(patch("/events/{id}", uuid)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(payload))
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  void update_event_with_start_after_end() throws Exception {
-    var uuid = UUID.fromString("38a14a82-d5a2-4210-9d61-cc3577bfa5df");
-
-    var payload = objectMapper.createObjectNode()
-        .put("start", "2001-01-01T12:00:00")
-        .put("end", "2001-01-01T00:00:00")
         .toString();
 
     mockMvc.perform(patch("/events/{id}", uuid)
