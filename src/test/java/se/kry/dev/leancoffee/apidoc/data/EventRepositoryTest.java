@@ -77,9 +77,10 @@ class EventRepositoryTest {
   @Test
   void save_event_with_blank_title() {
     var start = LocalDate.of(2001, Month.JANUARY, 1).atTime(LocalTime.MIDNIGHT);
+    var event = new Event().setTitle(" ").setStart(start).setEnd(start.plusHours(12));
 
     var exception = assertThrows(ConstraintViolationException.class, () ->
-        repository.saveAndFlush(new Event().setTitle(" ").setStart(start).setEnd(start.plusHours(12))));
+        repository.saveAndFlush(event));
 
     assertThat(exception.getConstraintViolations()).hasSize(1);
   }
@@ -88,9 +89,10 @@ class EventRepositoryTest {
   void save_event_with_too_long_title() {
     var title = "X".repeat(300);
     var start = LocalDate.of(2001, Month.JANUARY, 1).atTime(LocalTime.MIDNIGHT);
+    var event = new Event().setTitle(title).setStart(start).setEnd(start.plusHours(12));
 
     var exception = assertThrows(ConstraintViolationException.class, () ->
-        repository.saveAndFlush(new Event().setTitle(title).setStart(start).setEnd(start.plusHours(12))));
+        repository.saveAndFlush(event));
 
     assertThat(exception.getConstraintViolations()).hasSize(1);
   }
