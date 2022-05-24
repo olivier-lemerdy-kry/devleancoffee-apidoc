@@ -100,21 +100,21 @@ The Events resource is used to create and list events
 
 A `GET` request will list all of the events.
 
-operation::step2_read_events[snippets='response-fields,curl-request,http-response']
+operation::step2_read_events[snippets='request-parameters,response-fields,curl-request,http-response']
 
 [[resources_events_create]]
 === Creating an event
 
 A `POST` request is used to create an event.
 
-operation::step1_create_event[snippets='request-fields,curl-request,http-response']
+operation::step1_create_event[snippets='request-fields,response-fields,curl-request,http-response']
 
 [[resources_event_read]]
 === Retrieving an event
 
 A `GET` request will retrieve the details of an event.
 
-operation::step4_read_event[snippets='response-fields,curl-request,http-response']
+operation::step4_read_event[snippets='path-parameters,response-fields,curl-request,http-response']
 
 [[resources_event_update]]
 === Updating an event
@@ -123,15 +123,15 @@ A `PATCH` request is used to update and event.
 
 ==== Request structure
 
-include::{snippets}/step_3_update_event/request-fields.adoc[]
+include::{snippets}/step3_update_event/request-fields.adoc[]
 
 To leave an attribute of an event unchanged, any of the above may be omitted from the request.
 
-operation::PATCH-events-ID[snippets='curl-request,http-response']
+operation::step3_update_event[snippets='path-parameters,curl-request,http-response']
 
 [[resources_event_delete]]
 === Deleting an event
 
-A `DELETE` request is used to delete an event
+A `DELETE` request is used to delete an event.
 
-operation::step_5_delete_event[snippets='response-fields,curl-request,http-response']
+operation::step5_delete_event[snippets='path-parameters,curl-request,http-response']

@@ -2,6 +2,8 @@ package se.kry.dev.leancoffee.apidoc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.startsWith;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
@@ -9,10 +11,15 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,6 +35,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.snippet.Snippet;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -112,7 +120,20 @@ class ApplicationTest {
             jsonPath("$._embedded.events[0]._links").isMap(),
             jsonPath("$._embedded.events[0]._links.self").isMap(),
             jsonPath("$._embedded.events[0]._links.self.href").value(startsWith("https://dev.kry.se/events/")))
-        .andDo(document("step2_read_events"));
+        .andDo(document("step2_read_events",
+            requestParameters(
+                pageParameter(),
+                pageSizeParameter()
+            ),
+            responseFields(
+                pageSubsection(),
+                embeddedSubsection(),
+                linksSubsection()
+            ).andWithPrefix("page.",
+                fieldWithPath("size").description("Page size"),
+                fieldWithPath("totalElements").description("Total number of elements in the collection"),
+                fieldWithPath("totalPages").description("Total number of pages in the collection"),
+                fieldWithPath("number").description("Page number, 0-based"))));
   }
 
   void step3_update_event(UUID id) throws Exception {
@@ -135,10 +156,13 @@ class ApplicationTest {
             jsonPath("$._links.self").isMap(),
             jsonPath("$._links.self.href").value(startsWith("https://dev.kry.se/events/")))
         .andDo(document("step3_update_event",
+            pathParameters(
+                idParameter()
+            ),
             requestFields(
-                titleField(),
-                startField(),
-                endField()
+                titleField().optional(),
+                startField().optional(),
+                endField().optional()
             ),
             responseFields(
                 idField(),
@@ -162,6 +186,9 @@ class ApplicationTest {
             jsonPath("$._links.self").isMap(),
             jsonPath("$._links.self.href").value(startsWith("https://dev.kry.se/events/")))
         .andDo(document("step4_read_event",
+            pathParameters(
+                idParameter()
+            ),
             responseFields(
                 idField(),
                 titleField(),
@@ -177,7 +204,10 @@ class ApplicationTest {
 
     mockMvc.perform(delete("/events/{id}", id))
         .andExpect(status().isNoContent())
-        .andDo(document("step5_delete_event"));
+        .andDo(document("step5_delete_event",
+            pathParameters(
+                idParameter()
+            )));
 
     assertThat(repository.count()).isZero();
   }
@@ -187,6 +217,18 @@ class ApplicationTest {
         preprocessRequest(prettyPrint()),
         preprocessResponse(prettyPrint()),
         snippets);
+  }
+
+  private ParameterDescriptor idParameter() {
+    return parameterWithName("id").description("Event unique identifier (UUID)");
+  }
+
+  private ParameterDescriptor pageParameter() {
+    return parameterWithName("page").description("Page number, 0-based").optional();
+  }
+
+  private ParameterDescriptor pageSizeParameter() {
+    return parameterWithName("size").description("Page size").optional();
   }
 
   private FieldDescriptor idField() {
@@ -206,6 +248,14 @@ class ApplicationTest {
 
   private FieldDescriptor endField() {
     return fieldWithPath("end").description("End date time of this event, required to be after start");
+  }
+
+  private FieldDescriptor pageSubsection() {
+    return subsectionWithPath("page").description("Embedded resources");
+  }
+
+  private FieldDescriptor embeddedSubsection() {
+    return subsectionWithPath("_embedded").description("Embedded resources");
   }
 
   private FieldDescriptor linksSubsection() {
