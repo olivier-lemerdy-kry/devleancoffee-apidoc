@@ -1,7 +1,7 @@
 [versions]
 springboot = "2.6.7"
 springdoc-openapi = "1.6.8"
-asciidoctor = "1.5.8"
+asciidoctor = "3.3.2"
 
 [libraries]
 springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-ui", version.ref = "springdoc-openapi" }
@@ -15,4 +15,4 @@ springdoc-openapi = ['springdoc-openapi-ui', 'springdoc-openapi-webmvc', 'spring
 [plugins]
 springboot = { id = "org.springframework.boot", version.ref = "springboot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version = "1.0.11.RELEASE" }
-asciidoctor = { id = "org.asciidoctor.convert", version.ref = "asciidoctor" }
+asciidoctor = { id = "org.asciidoctor.jvm.convert", version.ref = "asciidoctor" }

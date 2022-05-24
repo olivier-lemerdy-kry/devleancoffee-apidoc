@@ -90,22 +90,10 @@ Users of the API should not create URIs themselves, instead they should use the 
 [[resources]]
 = Resources
 
-[[resources_index]]
-== Index
-
-The index provides the entry point into the service.
-
-[[resources_index_access]]
-=== Accessing the index
-
-A `GET` request is used to access the index
-
-operation::index-example[snippets='response-fields,http-response,links']
-
 [[resources_events]]
 == Events
 
-The Notes resources is used to create and list notes
+The Events resource is used to create and list events
 
 [[resources_events_list]]
 === Listing events
@@ -137,7 +125,7 @@ A `PATCH` request is used to update and event.
 
 include::{snippets}/step_3_update_event/request-fields.adoc[]
 
-To leave an attribute of a note unchanged, any of the above may be omitted from the request.
+To leave an attribute of an event unchanged, any of the above may be omitted from the request.
 
 operation::PATCH-events-ID[snippets='curl-request,http-response']
 
