@@ -20,7 +20,7 @@ Then run `docker run -p 8080:8080 -e SPRING_SECURITY_USER_PASSWORD=password -t d
 
 ## Logging in the application
 
-You can log in the application with `user / password` couple of credentials.
+You can log in the application with `user / password` credentials pair.
 
 ## Swagger / OpenAPI 3
 
@@ -42,4 +42,4 @@ Our template API Documentation Guide is [available here](src/docs/asciidoc/api-g
 
 Our main test class generating the snippets used in the code is [available here](src/test/java/se/kry/dev/leancoffee/apidoc/ApplicationTest.java)
 
-The generated build is deployed in the application here: http://localhost:8080/docs/api-guide.html
+The generated documentation is deployed in the application here: http://localhost:8080/docs/api-guide.html
