@@ -1,6 +1,6 @@
 [versions]
-springboot = "2.6.7"
-springdoc-openapi = "1.6.8"
+springboot = "2.7.5"
+springdoc-openapi = "1.6.13"
 asciidoctor = "3.3.2"
 
 [libraries]
