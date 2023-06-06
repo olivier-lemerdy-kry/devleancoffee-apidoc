@@ -4,10 +4,10 @@ import static se.kry.dev.leancoffee.apidoc.domain.EventConstants.SIZE_TITLE;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import javax.persistence.Entity;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

@@ -3,9 +3,9 @@ package se.kry.dev.leancoffee.apidoc.domain;
 import static se.kry.dev.leancoffee.apidoc.domain.EventConstants.SIZE_TITLE;
 
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NonNull;
 import org.springframework.hateoas.InputType;

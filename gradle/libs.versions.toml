@@ -1,16 +1,13 @@
 [versions]
-springboot = "2.7.5"
-springdoc-openapi = "1.6.13"
+springboot = "3.1.0"
+springdoc-openapi = "2.1.0"
 asciidoctor = "3.3.2"
 
 [libraries]
-springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-ui", version.ref = "springdoc-openapi" }
-springdoc-openapi-webmvc = { module = "org.springdoc:springdoc-openapi-webmvc-core", version.ref = "springdoc-openapi" }
-springdoc-openapi-hateoas = { module = "org.springdoc:springdoc-openapi-hateoas", version.ref = "springdoc-openapi" }
-springdoc-openapi-security = { module = "org.springdoc:springdoc-openapi-security", version.ref = "springdoc-openapi" }
+springdoc-openapi-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 
 [bundles]
-springdoc-openapi = ['springdoc-openapi-ui', 'springdoc-openapi-webmvc', 'springdoc-openapi-hateoas', 'springdoc-openapi-security']
+springdoc-openapi = ['springdoc-openapi-webmvc-ui']
 
 [plugins]
 springboot = { id = "org.springframework.boot", version.ref = "springboot" }
